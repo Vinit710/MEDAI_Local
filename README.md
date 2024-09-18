@@ -98,6 +98,18 @@ You can deploy this project to any Node.js hosting platform such as Heroku, Digi
 Here are some screenshots of the application:
 
 1. **Chatbot Interface**  
+   ![Chatbot Interface](https://drive.google.com/uc?id=1OCZkNqKwDkdNl-CaBOO_7sZ_8cMr69ks)
+
+2. **Ocular Disease Prediction Page**  
+   ![Ocular Disease Prediction](https://drive.google.com/file/d/1GROBxU-LvlVnXsbJknvTqneQoK2TY2V_/view?usp=sharing)
+
+3. **Home Page**  
+   ![Home_1](https://drive.google.com/file/d/1Umm7fA0jQlYrgCfwFps9ggW5-NwdmdsQ/view?usp=sharing)
+
+4. **Home page**  
+   ![Home_2](https://drive.google.com/file/d/1c-fN0kizbbkMWOUgtGDQ76nt36UPVgVP/view?usp=sharing)
+
+1. **Chatbot Interface**  
    ![Chatbot Interface](https://drive.google.com/file/d/1OCZkNqKwDkdNl-CaBOO_7sZ_8cMr69ks/view?usp=sharing)
 
 2. **Ocular Disease Prediction Page**  
