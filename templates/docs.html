@@ -75,7 +75,7 @@
                 <a href="#" onclick="showModelInfo('ocular')">Ocular Scan Model</a>
                 <a href="#" onclick="showModelInfo('nlp')">Medical Chatbot Using LLaMA 2.0</a>
                 <a href="#" onclick="showModelInfo('skin')">Skin Disease Model</a>
-                <a href="#" onclick="showModelInfo('heart')">Heart Disease Model</a>
+                <a href="#" onclick="showModelInfo('sym')">Symtom to disease prediction model</a>
                 <!-- Add more models here -->
             </nav>
 
@@ -274,14 +274,46 @@ print(response)</code></pre>
                     <img src="/static/images/loss.png" class="img-fluid" alt="Training/Validation Loss ">
                 `;
 
-            } else if (model === 'heart') {
+            } else if (model === 'sym') {
                 content = `
-                    <h2>Heart Disease Model</h2>
-                    <p>This model predicts the likelihood of heart diseases based on various health parameters.</p>
-                    <img src="path/to/heart_image.jpg" class="img-fluid" alt="Heart Disease Model">
-                    <h3>Performance Metrics</h3>
-                    <p>Accuracy: 92%<br>Precision: 89%<br>Recall: 90%</p>
-                    <!-- Add more info and images about the model here -->
+                    <h1>Symptom-Based Disease Prediction Model</h1>
+
+<h2>Overview</h2>
+<p>This document provides an overview of a symptom-based disease prediction model implemented in Python using a Jupyter Notebook. The model uses a set of symptoms and patient data to predict potential diseases. Below is a detailed explanation of how the model works, along with information on the input data, feature encoding, and prediction process.</p>
+
+<h2>Input Data Collection</h2>
+<p>The model collects the following inputs from the user:</p>
+<ul>
+    <li><strong>Age:</strong> Numeric value representing the age of the patient.</li>
+    <li><strong>Gender:</strong> Categorical value (Male/Female).</li>
+    <li><strong>Fever:</strong> Binary value indicating the presence of fever (Yes/No).</li>
+    <li><strong>Cough:</strong> Binary value indicating the presence of cough (Yes/No).</li>
+    <li><strong>Fatigue:</strong> Binary value indicating the presence of fatigue (Yes/No).</li>
+    <li><strong>Difficulty Breathing:</strong> Binary value indicating difficulty in breathing (Yes/No).</li>
+    <li><strong>Blood Pressure:</strong> Categorical value indicating blood pressure levels (Low/Normal/High).</li>
+    <li><strong>Cholesterol Level:</strong> Categorical value indicating cholesterol levels (Low/Normal/High).</li>
+</ul>
+
+<h2>Feature Encoding</h2>
+<p>The input features are encoded into numerical values to be used for model prediction. For example:</p>
+<ul>
+    <li><strong>Gender:</strong> Encoded as 0 for Male and 1 for Female.</li>
+    <li><strong>Symptoms:</strong> Fever, Cough, Fatigue, and Difficulty Breathing are encoded as 0 for No and 1 for Yes.</li>
+    <li><strong>Blood Pressure:</strong> Assigned numerical values based on the category (e.g., Low = 0, Normal = 1, High = 2).</li>
+    <li><strong>Cholesterol Levels:</strong> Assigned numerical values based on the category (e.g., Low = 0, Normal = 1, High = 2).</li>
+</ul>
+
+<h2>Prediction Model</h2>
+<p>The encoded features are fed into a trained machine learning model that predicts the likely disease. The predicted output is mapped to a disease name using a predefined dictionary. For example, based on the inputs provided, the model predicted <strong>Schizophrenia</strong> as the disease.</p>
+
+<h2>Model Details</h2>
+<p>The details of the machine learning model (such as model type, training data, accuracy, and performance metrics) are not included in this section as they were not explicitly mentioned in the notebook. However, typical models used for disease prediction may include:</p>
+<ul>
+    <li>Logistic Regression</li>
+    <li>Decision Trees</li>
+    <li>Neural Networks</li>
+</ul>
+<p>These models are trained on a dataset of patient symptoms and diagnosed diseases.</p>
                 `;
             }
 
