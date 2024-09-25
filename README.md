@@ -64,9 +64,7 @@ By default, the server will start on `http://localhost:3000`.
 │   ├── contact.html             # Contact page
 │   └── docs.html                # Documentation page
 ├── static/                      # Directory for static files (CSS, JS)
-├── script.mjs                   # Main JavaScript module for frontend interactions
-├── script_skin.mjs              # JavaScript module for skin disease-related interactions
-├── server.mjs                   # Server-side logic (Node.js backend)
+├── server.mjs                   # Server-side logic (Node.js backend and API's)
 ├── package.json                 # Project configuration and dependencies
 ├── package-lock.json            # Lockfile for exact dependency versions
 ├── requirements.txt             # Python package dependencies
