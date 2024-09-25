@@ -73,7 +73,7 @@
             <nav class="col-md-2 sidebar">
                 <h5>MODELS</h5>
                 <a href="#" onclick="showModelInfo('ocular')">Ocular Scan Model</a>
-                <a href="#" onclick="showModelInfo('xray')">X-Ray Scan Model</a>
+                <a href="#" onclick="showModelInfo('nlp')">Medical Chatbot Using LLaMA 2.0</a>
                 <a href="#" onclick="showModelInfo('skin')">Skin Disease Model</a>
                 <a href="#" onclick="showModelInfo('heart')">Heart Disease Model</a>
                 <!-- Add more models here -->
@@ -114,14 +114,118 @@
                     <p>Accuracy: 95%<br>Precision: 92%<br>Recall: 93%</p>
                     <!-- Add more info and images about the model here -->
                 `;
-            } else if (model === 'xray') {
+            } else if (model === 'nlp') {
                 content = `
-                    <h2>X-Ray Scan Model</h2>
-                    <p>This model identifies lung-related diseases from chest X-rays, including pneumonia and COVID-19.</p>
-                    <img src="path/to/xray_image.jpg" class="img-fluid" alt="X-Ray Scan">
-                    <h3>Performance Metrics</h3>
-                    <p>Accuracy: 97%<br>Precision: 95%<br>Recall: 96%</p>
-                    <!-- Add more info and images about the model here -->
+                    <h1>Medical Chatbot Using LLaMA 2.0</h1>
+
+<h2>Table of Contents</h2>
+<ol>
+    <li><a href="#project-overview">Project Overview</a></li>
+    <li><a href="#dataset-information">Dataset Information</a></li>
+    <li><a href="#model-information">Model Information</a></li>
+    <li><a href="#training-process">Training Process</a></li>
+    <li><a href="#results-and-evaluation">Results and Evaluation</a></li>
+    <li><a href="#usage">Usage</a></li>
+    <li><a href="#conclusion">Conclusion</a></li>
+</ol>
+
+<h2 id="project-overview">1. Project Overview</h2>
+<p>This project involves the development of a medical chatbot powered by the LLaMA 2.0 model. The chatbot is designed to provide medical recommendations, advice, and generate responses to queries from both patients and doctors. The model has been fine-tuned on a dataset of question-answer pairs from real doctor-patient interactions.</p>
+
+<h2 id="dataset-information">2. Dataset Information</h2>
+<ul>
+    <li><strong>Dataset Source:</strong> Collected from actual doctor-patient interactions.</li>
+    <li><strong>Data Format:</strong> The dataset consists of pairs of patient queries and doctor responses.</li>
+    <li><strong>Size:</strong> Total number of entries: 1,000 (example size; adjust as necessary).</li>
+    <li><strong>Example Entries:</strong>
+        <ul>
+            <li><strong>Patient:</strong> "What does abutment of the nerve root mean?"</li>
+            <li><strong>Doctor:</strong> "Abutment refers to..."</li>
+        </ul>
+    </li>
+</ul>
+
+<h3>Data Characteristics</h3>
+<p>The dataset includes a variety of medical topics, ensuring comprehensive coverage of potential patient queries. Data has been pre-processed to ensure quality and relevance.</p>
+
+<h2 id="model-information">3. Model Information</h2>
+<ul>
+    <li><strong>Model Architecture:</strong> LLaMA 2.0 (version 2.0)</li>
+    <li><strong>Model Type:</strong> Pre-trained language model fine-tuned for a medical question-answering task.</li>
+    <li><strong>Training Objective:</strong> To generate appropriate responses to patient queries based on the context provided in the training dataset.</li>
+</ul>
+
+<h2 id="training-process">4. Training Process</h2>
+<h3>Step-by-Step Breakdown:</h3>
+<ol>
+    <li><strong>Tokenization:</strong>
+        <pre><code>def tokenize_function(examples):
+    inputs = tokenizer(examples['Patient'], padding="max_length", truncation=True)
+    labels = tokenizer(examples['Doctor'], padding="max_length", truncation=True)
+    return {
+        "input_ids": inputs.input_ids,
+        "attention_mask": inputs.attention_mask,
+        "labels": labels.input_ids
+    }</code></pre>
+    </li>
+    <li><strong>Tokenizing the Dataset:</strong>
+        <pre><code>tokenized_dataset = dataset.map(tokenize_function, batched=True)</code></pre>
+    </li>
+    <li><strong>Defining Training Arguments:</strong>
+        <pre><code>training_args = TrainingArguments(
+    output_dir="./results",
+    evaluation_strategy="epoch",
+    per_device_train_batch_size=1,
+    per_device_eval_batch_size=1,
+    num_train_epochs=3,
+    save_steps=500,
+    save_total_limit=2,
+    logging_dir='./logs',
+    logging_steps=10,
+    gradient_accumulation_steps=16,
+    fp16=True,
+)</code></pre>
+    </li>
+    <li><strong>Trainer Initialization:</strong>
+        <pre><code>trainer = Trainer(
+    model=model,
+    args=training_args,
+    train_dataset=tokenized_dataset,
+    eval_dataset=tokenized_dataset,
+)</code></pre>
+    </li>
+    <li><strong>Model Training:</strong>
+        <pre><code>trainer.train()</code></pre>
+    </li>
+    <li><strong>Model Saving:</strong>
+        <pre><code>model.save_pretrained("./fine-tuned-llama")
+tokenizer.save_pretrained("./fine-tuned-llama")</code></pre>
+    </li>
+</ol>
+
+<h2 id="results-and-evaluation">5. Results and Evaluation</h2>
+<ul>
+    <li><strong>Evaluation Metrics:</strong> Evaluation strategies will be based on accuracy, loss, and other relevant metrics to assess model performance.</li>
+    <li><strong>Example Responses:</strong> The model can generate coherent and contextually relevant responses to patient queries, as shown in the training data examples.</li>
+</ul>
+
+<h2 id="usage">6. Usage</h2>
+<h3>Loading the Model:</h3>
+<pre><code>from transformers import LlamaForCausalLM, LlamaTokenizer
+
+model = LlamaForCausalLM.from_pretrained("./fine-tuned-llama")
+tokenizer = LlamaTokenizer.from_pretrained("./fine-tuned-llama")</code></pre>
+
+<h3>Generating Responses:</h3>
+<pre><code>input_text = "What should I do to reduce my weight gained due to genetic hypothyroidism?"
+inputs = tokenizer(input_text, return_tensors="pt")
+outputs = model.generate(**inputs)
+response = tokenizer.decode(outputs[0], skip_special_tokens=True)
+print(response)</code></pre>
+
+<h2 id="conclusion">7. Conclusion</h2>
+<p>This medical chatbot, powered by the fine-tuned LLaMA 2.0 model, aims to provide reliable and informative responses to patient queries, enhancing communication between patients and healthcare providers. Future improvements could involve expanding the dataset, refining the model further, and incorporating more advanced features.</p>
+
                 `;
             } else if (model === 'skin') {
                 content = `
