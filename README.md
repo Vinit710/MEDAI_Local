@@ -61,6 +61,7 @@ By default, the server will start on `http://localhost:3000`.
 │   ├── booking.html             # Appointment booking page
 │   ├── chat.html                # Chat interface page
 │   ├── symtodie.html            # Symptom-to-disease mapping page
+|   |-- xray.html                # x ray model page
 │   ├── contact.html             # Contact page
 │   └── docs.html                # Documentation page
 ├── static/                      # Directory for static files (CSS, JS)
