@@ -76,7 +76,7 @@
                 <a href="#" onclick="showModelInfo('nlp')">Medical Chatbot Using LLaMA 2.0</a>
                 <a href="#" onclick="showModelInfo('skin')">Skin Disease Model</a>
                 <a href="#" onclick="showModelInfo('sym')">Symtom to disease prediction model</a>
-                <a href="#" onclick="showModelInfo('xray')">X-ray Scan model</a>
+                <a href="#" onclick="showModelInfo('xray')">X-ray Diagnosis model</a>
                 <!-- Add more models here -->
             </nav>
 
@@ -449,6 +449,102 @@ print(response)</code></pre>
     <li>Neural Networks</li>
 </ul>
 <p>These models are trained on a dataset of patient symptoms and diagnosed diseases.</p>
+                `;
+            }else if (model === 'xray') {
+                content = `
+                 <h1>Fracture Detection Model Documentation</h1>
+
+    <h2>Overview</h2>
+    <p>This document provides detailed information about the fracture detection model built using TensorFlow and Keras. The model is trained to classify X-ray images of joints to determine whether they are fractured or not. It also includes an interactive Gradio interface for user input and prediction.</p>
+
+    <h2>Model Architecture</h2>
+    <p><b>Base Model:</b> VGG16</p>
+    <p>The fracture detection model uses the pre-trained VGG16 architecture, which is widely recognized for its success in image classification tasks.</p>
+    <ul>
+      <li><b>Convolutional Layers:</b> Extract image features from X-ray inputs.</li>
+      <li><b>Max Pooling Layers:</b> Reduce the dimensionality of the extracted features.</li>
+      <li><b>Fully Connected Layers:</b> Used for final classification of the image.</li>
+    </ul>
+    <p><b>Input Shape:</b> (150, 150, 3) – The model accepts RGB images resized to 150x150 pixels.</p>
+    <p><b>Output:</b> The model predicts a binary outcome:</p>
+    <ul>
+      <li><b>0:</b> Fractured</li>
+      <li><b>1:</b> Not Fractured</li>
+    </ul>
+
+    <h2>Training</h2>
+    <ul>
+      <li><b>Dataset:</b> The model was trained on X-ray images with labeled fracture statuses. Proper data splitting was performed for training and validation sets.</li>
+      <li><b>Loss Function:</b> Binary Crossentropy, which is suitable for binary classification tasks.</li>
+      <li><b>Optimizer:</b> Adam optimizer for adaptive learning rate adjustments.</li>
+    </ul>
+    <img src="/static/images/xray_graph_new.jpg" class="img-fluid" alt="Training/Validation Loss ">
+
+    <h2>Model Loading</h2>
+    <p>After training, the model is saved in HDF5 format and can be loaded as follows:</p>
+    <pre><code>from tensorflow.keras.models import load_model
+model = load_model("fracture_classifier_vgg16.h5")</code></pre>
+
+    <h2>Gradio Interface</h2>
+    <p><b>Gradio</b> is used to provide a user-friendly interface for the model. It allows users to upload an X-ray image and get predictions on whether the joint is fractured or not.</p>
+
+    <h3>Code Implementation</h3>
+    <pre><code>import gradio as gr
+from tensorflow.keras.models import load_model
+from tensorflow.keras.preprocessing import image
+import numpy as np
+
+# Load the pre-trained model
+model = load_model("fracture_classifier_vgg16.h5")
+
+# Define the prediction function
+def predict(img):
+    img = image.load_img(img, target_size=(150, 150))  # Resize image to the expected input shape
+    img_array = image.img_to_array(img) / 255.0  # Normalize the image
+    img_array = np.expand_dims(img_array, axis=0)  # Add batch dimension
+    prediction = model.predict(img_array)  # Make a prediction
+
+    # Interpret the prediction
+    if prediction[0] > 0.5:
+        return f"Prediction: Not Fractured (Confidence: {prediction[0][0]:.2f})"
+    else:
+        return f"Prediction: Fractured (Confidence: {1 - prediction[0][0]:.2f})"
+
+# Set up Gradio interface
+interface = gr.Interface(
+    fn=predict,
+    inputs=gr.Image(type="filepath"),
+    outputs="text",
+    title="Fracture Detection",
+    description="Upload an X-ray image of a joint to detect if it's fractured."
+)
+
+# Launch the Gradio interface
+if __name__ == "__main__":
+    interface.launch()</code></pre>
+
+    <h2>Input and Output</h2>
+    <ul>
+      <li><b>Input:</b> Users upload an X-ray image (in JPG/PNG format) via the Gradio interface.</li>
+      <li><b>Output:</b> The application returns a text output with the prediction (Fractured/Not Fractured) along with the confidence score.</li>
+    </ul>
+
+    <h2>Running the Application</h2>
+    <p>To run the Gradio interface, ensure that you have the necessary libraries installed:</p>
+    <pre><code>pip install tensorflow gradio</code></pre>
+    <p>Run the application script:</p>
+    <pre><code>python your_script.py</code></pre>
+    <p>Access the Gradio interface by navigating to <code>http://0.0.0.0:7860</code> in your browser.</p>
+
+    <h2>Additional Considerations</h2>
+    <p>To further improve the model:</p>
+    <ul>
+      <li>Use more diverse and augmented data to improve generalization.</li>
+      <li>Regularly monitor performance metrics (e.g., accuracy, loss) during training to avoid overfitting.</li>
+    </ul>
+
+    <h2>Conclusion</h2>
+    <p>This documentation outlines the fracture detection model built using TensorFlow and Gradio. The Gradio interface provides an easy-to-use way to interact with the model, allowing users to upload X-ray images and receive a fracture prediction.</p>
                 `;
             }
 
