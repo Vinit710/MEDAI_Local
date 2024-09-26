@@ -25,6 +25,8 @@ const chatClient = await Client.connect("Vinit710/Chatbot");
 
 // Initialize the Gradio client for the symptom-to-disease model
 const symtodieClient = await Client.connect('Vinit710/symtodise');
+// Connect to the Hugging Face model via Gradio Client
+const xrayClient = await Client.connect("darksoule26/fracture");
 
 const app = express();
 const port = 3000;
@@ -80,6 +82,10 @@ app.get('/symtodie', (req, res) => {
 
 app.get('/booking', (req, res) => {
   res.sendFile(path.join(__dirname, 'templates', 'booking.html'));
+});
+
+app.get('/xray', (req, res) => {
+  res.sendFile(path.join(__dirname, 'templates', 'xray.html'));
 });
 
 // Handle image uploads and predictions for ocular
@@ -225,6 +231,39 @@ app.post('/predict_symtodie', async (req, res) => {
   } catch (error) {
       console.error('Error during symptom-to-disease prediction:', error.message);
       res.status(500).json({ error: 'Prediction failed.' });
+  }
+});
+
+// Handle X-ray image upload and prediction
+app.post('/predict_xray', upload.single('input_image'), async (req, res) => {
+  try {
+    const imagePath = req.file.path;
+    console.log(`Uploaded X-ray image path: ${imagePath}`);
+
+    // Read the image as a Blob
+    const imageBuffer = fs.readFileSync(imagePath);
+    const imageBlob = new Blob([imageBuffer], { type: 'image/jpeg' });  // Set correct MIME type
+
+    // Make the prediction call to the Hugging Face API
+    const result = await xrayClient.predict("/predict", {
+      img: imageBlob  // Use the Blob format as required by the API
+    });
+
+    console.log('Prediction result:', result);
+
+    // Extract the prediction text from the API response
+    const prediction = result.data[0];
+
+    // Return the prediction result as JSON
+    res.status(200).json({ prediction });
+  } catch (error) {
+    console.error('Error during prediction:', error.message);
+    res.status(500).json({ error: 'Prediction failed. ' + error.message });
+  } finally {
+    // Clean up the uploaded image file
+    if (fs.existsSync(req.file.path)) {
+      fs.unlinkSync(req.file.path);
+    }
   }
 });
 
