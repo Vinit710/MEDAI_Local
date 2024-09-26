@@ -76,6 +76,7 @@
                 <a href="#" onclick="showModelInfo('nlp')">Medical Chatbot Using LLaMA 2.0</a>
                 <a href="#" onclick="showModelInfo('skin')">Skin Disease Model</a>
                 <a href="#" onclick="showModelInfo('sym')">Symtom to disease prediction model</a>
+                <a href="#" onclick="showModelInfo('xray')">X-ray Scan model</a>
                 <!-- Add more models here -->
             </nav>
 
@@ -108,11 +109,145 @@
             if (model === 'ocular') {
                 content = `
                     <h2>Ocular Scan Model</h2>
-                    <p>This model assists in diagnosing eye conditions based on retinal scans.</p>
-                    <img src="path/to/ocular_image.jpg" class="img-fluid" alt="Ocular Scan">
-                    <h3>Performance Metrics</h3>
-                    <p>Accuracy: 95%<br>Precision: 92%<br>Recall: 93%</p>
-                    <!-- Add more info and images about the model here -->
+                    <h1>Ocular Disease Recognition Model Documentation</h1>
+
+    <p>This documentation provides an overview of the code used to develop an ocular disease recognition model. The model is built using TensorFlow and Keras, and it classifies ocular diseases based on fundus images of the left and right eyes. The dataset used for this project is the <strong>ODIR-5K</strong> dataset, which contains labeled ocular fundus images.</p>
+
+    <h2>Model Overview</h2>
+    <p>The model is a convolutional neural network (CNN) designed to classify images into multiple ocular disease categories. These categories include:</p>
+    <ul>
+        <li>Normal (N)</li>
+        <li>Diabetes (D)</li>
+        <li>Glaucoma (G)</li>
+        <li>Cataract (C)</li>
+        <li>Age-related Macular Degeneration (A)</li>
+        <li>Hypertension (H)</li>
+        <li>Pathological Myopia (M)</li>
+        <li>Other Diseases/Abnormalities (O)</li>
+    </ul>
+
+    <h2>Dataset Preparation</h2>
+    <p>The dataset consists of fundus images for both the left and right eyes, along with corresponding labels for each image. The labels are one-hot encoded into multiple categories to represent the presence of multiple diseases.</p>
+
+    <pre><code># Define image size and paths
+IMG_SIZE = 128
+train_dir = '/kaggle/input/ocular-disease-recognition-odir5k/ODIR-5K/ODIR-5K/Training Images'
+test_dir = '/kaggle/input/ocular-disease-recognition-odir5k/ODIR-5K/ODIR-5K/Testing Images'
+
+# Load CSV file containing labels and image paths
+labels_df = pd.read_csv('/kaggle/input/ocular-disease-recognition-odir5k/full_df.csv')
+
+# Prepare image paths and labels
+labels_df['Left-Fundus'] = labels_df['ID'].astype(str) + '_left.jpg'
+labels_df['Right-Fundus'] = labels_df['ID'].astype(str) + '_right.jpg'
+y = labels_df[['N', 'D', 'G', 'C', 'A', 'H', 'M', 'O']].values</code></pre>
+
+    <h2>Data Generator</h2>
+    <p>A custom data generator is used to load and preprocess images in batches. This improves memory efficiency during model training.</p>
+
+    <pre><code>class DataGenerator(Sequence):
+    def __init__(self, image_paths, labels, batch_size=32, img_size=IMG_SIZE, shuffle=True):
+        self.image_paths = image_paths
+        self.labels = labels
+        self.batch_size = batch_size
+        self.img_size = img_size
+        self.shuffle = shuffle
+        self.on_epoch_end()
+
+    def __len__(self):
+        return int(np.floor(len(self.image_paths) / self.batch_size))
+
+    def __getitem__(self, index):
+        batch_paths = self.image_paths[index * self.batch_size:(index + 1) * self.batch_size]
+        batch_labels = self.labels[index * self.batch_size:(index + 1) * self.batch_size]
+        images = self.__load_images(batch_paths)
+        return np.array(images), np.array(batch_labels)
+
+    def __load_images(self, image_paths):
+        images = []
+        for path in image_paths:
+            img = cv2.imread(path)
+            img = cv2.resize(img, (self.img_size, self.img_size))
+            images.append(img / 255.0)  # Normalize images
+        return images</code></pre>
+
+    <h2>Model Architecture</h2>
+    <p>The model architecture is a Convolutional Neural Network (CNN) with the following layers:</p>
+    <ul>
+        <li>Conv2D layers with ReLU activation</li>
+        <li>MaxPooling2D layers</li>
+        <li>Fully connected Dense layers</li>
+        <li>Dropout layer for regularization</li>
+        <li>Output layer with Sigmoid activation for multi-label classification</li>
+    </ul>
+
+    <pre><code>inputs = Input(shape=(IMG_SIZE, IMG_SIZE, 3))
+x = Conv2D(32, (3, 3), activation='relu')(inputs)
+x = MaxPooling2D((2, 2))(x)
+x = Conv2D(64, (3, 3), activation='relu')(x)
+x = MaxPooling2D((2, 2))(x)
+x = Conv2D(128, (3, 3), activation='relu')(x)
+x = MaxPooling2D((2, 2))(x)
+x = Flatten()(x)
+x = Dense(128, activation='relu')(x)
+x = Dropout(0.5)(x)
+outputs = Dense(8, activation='sigmoid')(x)
+
+model = Model(inputs, outputs)
+model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
+model.summary()</code></pre>
+<img src="/static/images/ocular.jpg" class="img-fluid" alt="Ocular Scan">
+
+    <h2>Training the Model</h2>
+    <p>The model is trained using the Adam optimizer and binary cross-entropy loss, which is suitable for multi-label classification problems. The training process involves using the training and validation datasets created from the data generators.</p>
+
+    <pre><code>history = model.fit(
+    train_generator,
+    validation_data=val_generator,
+    epochs=10,
+    verbose=1
+)</code></pre>
+
+    <h2>Model Evaluation</h2>
+    <p>After training, the model is evaluated on the validation dataset to assess its performance. The accuracy and loss are printed for validation data.</p>
+
+    <pre><code>val_loss, val_acc = model.evaluate(val_generator)
+print(f"Validation Accuracy: {val_acc:.2f}")</code></pre>
+<img src="/static/images/ocular_graph.jpg" class="img-fluid" alt="Ocular Scan">
+
+    <h2>Prediction Function</h2>
+    <p>A custom prediction function is defined to load new images, preprocess them, and make predictions for ocular diseases based on left and right fundus images. The predictions are averaged for both eyes, and the results are returned as a dictionary of disease labels and corresponding probabilities.</p>
+
+    <pre><code>def predict_diseases(left_image_path, right_image_path, model, img_size=IMG_SIZE):
+    left_img = preprocess_image(left_image_path, img_size)
+    right_img = preprocess_image(right_image_path, img_size)
+    left_predictions = model.predict(left_img)
+    right_predictions = model.predict(right_img)
+    combined_predictions = (left_predictions + right_predictions) / 2
+    labels = ['Normal (N)', 'Diabetes (D)', 'Glaucoma (G)', 'Cataract (C)',
+              'Age-related Macular Degeneration (A)', 'Hypertension (H)',
+              'Pathological Myopia (M)', 'Other diseases/abnormalities (O)']
+    pred_labels = {label: pred for label, pred in zip(labels, combined_predictions[0])}
+    return pred_labels</code></pre>
+
+    <h2>Example Predictions</h2>
+    <p>The following example shows how to use the prediction function to generate predictions for new ocular fundus images.</p>
+
+    <pre><code># Paths to new images
+new_left_image_path = '/path/to/left_image.jpg'
+new_right_image_path = '/path/to/right_image.jpg'
+
+# Predict diseases
+disease_predictions = predict_diseases(new_left_image_path, new_right_image_path, model)
+
+# Print the predictions
+for disease, score in disease_predictions.items():
+    print(f"{disease}: {score:.4f}")</code></pre>
+
+    <h2>Conclusion</h2>
+    <p>This CNN-based ocular disease recognition model can predict multiple ocular conditions using fundus images from both eyes. The model achieves a validation accuracy of approximately 51%, and further improvements could be made through hyperparameter tuning, data augmentation, or model architecture enhancements.</p>
+                    
+                   
                 `;
             } else if (model === 'nlp') {
                 content = `
@@ -280,7 +415,7 @@ print(response)</code></pre>
 
 <h2>Overview</h2>
 <p>This document provides an overview of a symptom-based disease prediction model implemented in Python using a Jupyter Notebook. The model uses a set of symptoms and patient data to predict potential diseases. Below is a detailed explanation of how the model works, along with information on the input data, feature encoding, and prediction process.</p>
-
+<img src="/static/images/symtodie.png" class="img-fluid" alt="Ocular Scan">
 <h2>Input Data Collection</h2>
 <p>The model collects the following inputs from the user:</p>
 <ul>
