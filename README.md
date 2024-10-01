@@ -111,6 +111,10 @@ Here are some screenshots of the application:
 
 
 ### Deploy to Heroku
+You can test the prototype here:
+https://medai-phi.vercel.app/
+
+or can deploy:
 
 1. Install Heroku CLI: https://devcenter.heroku.com/articles/heroku-cli
 2. Run the following commands:
