@@ -30,7 +30,7 @@ This project is a web-based application that offers a chatbot for medical conver
 ```bash
 git clone https://github.com/Vinit710/MEDAI
 cd MEDAI_Local
-
+```
 ### Install Dependencies
 
 ```bash
